@@ -1,0 +1,5 @@
+interface:
+  display_name: "Simple Code"
+  short_description: "Keep code simple and justify added complexity"
+policy:
+  allow_implicit_invocation: true

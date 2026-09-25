@@ -9,6 +9,7 @@ every teammate gets it with `git pull`.
 | Skill | What it does |
 |---|---|
 | [`android-architecture`](skills/android-architecture) | Decide where Android code belongs, scaffold feature slices, and review Kotlin/Android code against the official Android architecture recommendations. Ships a dependency-free architecture linter. |
+| [`simple-code`](skills/simple-code) | Keep implementations, refactors, and reviews simple: justify abstractions, clarify ownership, and preserve correctness without unnecessary infrastructure. Applies across features and technology stacks. |
 
 ## Install
 
