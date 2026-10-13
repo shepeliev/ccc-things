@@ -9,6 +9,7 @@ every teammate gets it with `git pull`.
 | Skill | What it does |
 |---|---|
 | [`android-architecture`](skills/android-architecture) | Decide where Android code belongs, scaffold feature slices, and review Kotlin/Android code against the official Android architecture recommendations. Ships a dependency-free architecture linter. |
+| [`codex-review-to-mr`](skills/codex-review-to-mr) | Finish a branch with a Codex review loop: Claude checks each finding against the real code, fixes the real ones, repeats up to 5 rounds, takes screenshots of visual changes, and opens the MR/PR. Claude Code only. |
 | [`simple-code`](skills/simple-code) | Keep implementations, refactors, and reviews simple: justify abstractions, clarify ownership, and preserve correctness without unnecessary infrastructure. Applies across features and technology stacks. |
 
 ## Install
