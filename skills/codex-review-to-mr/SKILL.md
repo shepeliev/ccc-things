@@ -61,7 +61,9 @@ Rules:
 - Open the file at the line. Trace the trigger yourself. Codex's confidence is not evidence:
   it says how sure Codex is that the bug exists, not how often a user meets it.
 - Count the conditions in the trigger. Each unusual event in a sequence counts once ("removed,
-  then re-added, while the screen stays open" is two). A step every user takes counts zero.
+  then re-added, while the screen stays open" is two). A step every user takes counts zero, and
+  so does a scenario a tester sets up on purpose: a bulk action, many items at once, going
+  offline and back, backgrounding mid-action, a slow network. QA will run it, so it is REAL.
   P0 and P1 findings are never RARE.
 - A finding in code that an earlier round's fix added is RARE when the earlier finding was RARE
   too: do not fix a rare case by stacking more state on it.
@@ -157,6 +159,7 @@ and wait for the answer.
 | Fix every finding Codex gives | Trace each one. Reject what no real path reaches. |
 | Reject a finding with "unlikely" | Name the reason: no caller, guarded at line X, or input never reaches it. |
 | Call a finding RARE by feel | Count the conditions in its trigger. Two or more unlikely ones together, and it is not P0/P1. |
+| Count a QA scenario as unusual | Bulk actions, offline-and-back, many items at once: testers run these on purpose. They count zero. |
 | Fix the rare case that the last fix opened | Stacked state for rare cases breeds the next round's findings. Defer it to an issue. |
 | Run more rounds because every round finds something | Look at what it finds. Only rarer cases left means stop. |
 | Leave rejected or deferred findings out of the next prompt | Codex reports them again. List them with reasons. |

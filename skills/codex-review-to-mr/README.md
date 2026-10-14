@@ -13,7 +13,8 @@ It is built for the end of a [superpowers](https://github.com/obra/superpowers) 
 2. Claude traces each finding through the code and gives it one verdict: REAL (fixed, test first),
    NOT REACHABLE or WRONG (rejected with a reason), or RARE / OUT OF SCOPE (a follow-up issue in
    GitLab or GitHub, linked from the MR). RARE = real, but the trigger needs two or more unlikely
-   conditions together.
+   conditions together. A scenario testers set up on purpose (bulk actions, offline and back, many
+   items at once) is not unlikely: it stays REAL.
 3. Rejected and deferred findings go back into the next round's prompt, so Codex does not raise
    them again. The loop stops at a clean round, a round with nothing real, a round with only
    rare few-line fixes, two rounds in a row in the same area, or after 5 rounds.
