@@ -11,9 +11,12 @@ It is built for the end of a [superpowers](https://github.com/obra/superpowers) 
    what to look for, and a **reachability rule** — every finding must name the real caller and
    input that trigger it.
 2. Claude traces each finding through the code and gives it one verdict: REAL (fixed, test first),
-   NOT REACHABLE or WRONG (rejected with a reason), or OUT OF SCOPE (a follow-up in the MR).
-3. Rejected findings go back into the next round's prompt, so Codex does not raise them again.
-   The loop stops at a clean round, a round with nothing real, or after 5 rounds.
+   NOT REACHABLE or WRONG (rejected with a reason), or RARE / OUT OF SCOPE (a follow-up issue in
+   GitLab or GitHub, linked from the MR). RARE = real, but the trigger needs two or more unlikely
+   conditions together.
+3. Rejected and deferred findings go back into the next round's prompt, so Codex does not raise
+   them again. The loop stops at a clean round, a round with nothing real, a round with only
+   rare few-line fixes, two rounds in a row in the same area, or after 5 rounds.
 4. For a visual change, Claude takes screenshots with the project's own tool (Roborazzi,
    Paparazzi, snapshot tests, Playwright, `adb`, `simctl`). With no tool, it stops and proposes one.
 5. It pushes, opens the GitLab MR or GitHub PR with the review table in the description, and

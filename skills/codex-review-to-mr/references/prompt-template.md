@@ -44,7 +44,7 @@ branch did not touch counts only if this branch makes it reachable or worse.
 
 {{EARLIER_ROUNDS}}
 
-Do not report a rejected finding again unless you have new evidence; then say what is new in
+Do not report a rejected or deferred finding again unless you have new evidence; then say what is new in
 `problem`. Check that each fix from earlier rounds is correct and did not break anything.
 
 ## Output
