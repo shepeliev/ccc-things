@@ -7,9 +7,11 @@ It is built for the end of a [superpowers](https://github.com/obra/superpowers) 
 (brainstorm → spec → plan → execution). Where `finishing-a-development-branch` would ask
 "merge, PR, or keep?", this skill takes over:
 
-1. Codex reviews `git diff <merge-base>...HEAD` with a custom prompt: the goal, the spec and plan,
+1. Codex reviews `git diff <merge-base> HEAD` with a custom prompt: the goal, the spec and plan,
    what to look for, and a **reachability rule** — every finding must name the real caller and
-   input that trigger it.
+   input that trigger it. Codex gets only the prompt (a few KB) and runs the diff itself in its
+   read-only sandbox, so a branch of any size fits. Where that sandbox cannot run commands (WSL),
+   a fresh Claude subagent reviews with the same prompt.
 2. Claude traces each finding through the code and gives it one verdict: REAL (fixed, test first),
    NOT REACHABLE or WRONG (rejected with a reason), or RARE / OUT OF SCOPE (a follow-up issue in
    GitLab or GitHub, linked from the MR). RARE = real, but the trigger needs two or more unlikely
@@ -53,6 +55,8 @@ Without the rule, invoke it by hand: `/codex-review-to-mr [base-branch]`.
 
 ## Files
 
+- `scripts/check-codex.sh` exits 0 when `codex` is on PATH and `codex sandbox` can run `git` and
+  read a file in the repository; otherwise it exits 1 and the skill uses the Claude subagent.
 - `scripts/run-codex-review.sh` runs one round detached from the agent's shell timeout and writes
   `round<N>.json`, `.log`, `.model`, `.exit`, `.done` under `<git-dir>/codex-review/`.
 - `references/prompt-template.md` is the review prompt with `{{…}}` placeholders.

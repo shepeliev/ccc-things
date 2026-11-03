@@ -4,6 +4,9 @@
 # Usage: run-codex-review.sh <out-dir> <round> <prompt-file>
 # Writes <out-dir>/round<N>.json (findings), .log (Codex chatter), .model, .exit, then .done.
 # Tries the models in CODEX_REVIEW_MODELS in order; moves on only when a model is unavailable.
+# Codex gets only the prompt on stdin (a few KB). It runs the diff command the prompt names and
+# reads the files it needs in its read-only sandbox, so a branch of any size stays under Codex's
+# input limit. Run check-codex.sh first: where the sandbox cannot run commands, do not use this.
 set -u
 out=$1 n=$2 prompt=$3
 here=$(cd "$(dirname "$0")" && pwd)

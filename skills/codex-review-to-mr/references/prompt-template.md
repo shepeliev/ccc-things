@@ -5,14 +5,15 @@ find. Review round {{ROUND}} of at most 5.
 
 - Repository: {{REPO_ROOT}}
 - Branch `{{BRANCH}}`, base `{{BASE}}`, merge base `{{MERGE_BASE}}`.
-- The change under review is `git diff {{MERGE_BASE}}...HEAD`. Run `git log --oneline {{MERGE_BASE}}..HEAD`
-  and `git diff --stat {{MERGE_BASE}}...HEAD` first.
+- The change under review is `git diff {{MERGE_BASE}} HEAD`. The diff is not in this prompt: run
+  `git log --oneline {{MERGE_BASE}}..HEAD` and `git diff --stat {{MERGE_BASE}} HEAD` first, then
+  read the diff, file by file if it is large.
 - Goal of the change: {{GOAL}}
 - Spec and plan (read them; the code must do what they say): {{SPEC_AND_PLAN_PATHS}}
 - Project rules: read AGENTS.md / CLAUDE.md in the repo root and in the changed directories.
 
-You can read any file and run read-only commands (git, grep, cat). You cannot build or run tests.
-Read the callers and the callees of changed code, not only the diff hunks.
+You can read any file and run read-only commands (git, grep, cat). Do not build, run tests or
+change files. Read the callers and the callees of changed code, not only the diff hunks.
 
 ## What to look for
 

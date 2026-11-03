@@ -6,7 +6,8 @@ argument-hint: "[base branch; default: the branch's fork point]"
 
 # codex-review-to-mr
 
-This skill takes a finished branch to a ready merge request. Codex reviews the branch. You check
+This skill takes a finished branch to a ready merge request. Codex reviews the branch (a fresh Claude
+subagent does, where the Codex sandbox cannot run commands). You check
 each finding, fix the real ones, and ask Codex again. Then you open the MR and tell the user.
 
 It replaces Steps 4-5 of superpowers:finishing-a-development-branch. Do not show that menu.
@@ -24,14 +25,22 @@ It replaces Steps 4-5 of superpowers:finishing-a-development-branch. Do not show
    the commits and is separate for each worktree.
 5. Find the spec and the plan of this work (`docs/**/specs`, `docs/**/plans`, the paths that
    brainstorming and writing-plans gave). Write the goal in 1-3 sentences.
+6. Choose the reviewer. From the repo root, run `<this skill's directory>/scripts/check-codex.sh`.
+   It tests that `codex` is on PATH and that the Codex read-only sandbox can run `git` and read
+   a file in this repository. Exit 0: Codex reviews every round. Exit 1 (for example under WSL,
+   where the sandbox cannot run commands): a fresh Claude subagent reviews every round (step 2,
+   item 5). Never pipe the diff or the files to Codex instead: a large branch exceeds its input limit.
 
-## 2. Run a Codex round
+## 2. Run a review round
 
 1. Write `$OUT/round<N>-prompt.md` from `references/prompt-template.md` in this skill's directory. Fill every
-   `{{…}}`. For round 1, `{{EARLIER_ROUNDS}}` is "None." From round 2, list each earlier finding
+   `{{…}}`. Both reviewers get the same prompt: it names the diff command, and the reviewer runs it.
+   For round 1, `{{EARLIER_ROUNDS}}` is "None." From round 2, list each earlier finding
    with its id, title, and your verdict: fixed (commit sha), deferred to a follow-up issue
    (RARE or OUT OF SCOPE), or rejected (one-line reason).
-2. Start it detached. A round takes 5-20 minutes, more than the Bash timeout:
+   If a second repository's changes are reviewed too (for example autotests), add its diff command
+   under "What changed": `git -C <path> diff <its merge base> HEAD`.
+2. Codex: start it detached. A round takes 5-20 minutes, more than the Bash timeout:
    ```bash
    nohup <this skill's directory>/scripts/run-codex-review.sh "$OUT" <N> "$OUT/round<N>-prompt.md" >/dev/null 2>&1 &
    ```
@@ -43,6 +52,10 @@ It replaces Steps 4-5 of superpowers:finishing-a-development-branch. Do not show
    ```
 4. If `exit` is not 0, read the tail of `round<N>.log`. Retry once for a transient error. Then
    stop and report. Do not open the MR without a review.
+5. Claude subagent (only when `check-codex.sh` failed): start a fresh general-purpose subagent,
+   not a fork. Give it the text of `round<N>-prompt.md`, then the schema in
+   `references/findings.schema.json`, and ask it to answer with only that JSON. Write the answer to
+   `$OUT/round<N>.json` and `claude` to `$OUT/round<N>.model`.
 
 ## 3. Triage every finding
 
@@ -155,6 +168,8 @@ and wait for the answer.
 | Mistake | Correct action |
 |---|---|
 | `codex exec review --base X "prompt"` | It rejects a prompt with `--base`. Use `scripts/run-codex-review.sh`. |
+| Pipe the diff or the changed files to Codex | A large branch exceeds its input limit (1,048,576 characters). Send only the prompt; Codex runs the diff. |
+| Pipe the diff when `check-codex.sh` fails | Use the Claude subagent (step 2, item 5). |
 | Run Codex in the foreground Bash call | The Bash timeout kills it. Use nohup and a Monitor. |
 | Fix every finding Codex gives | Trace each one. Reject what no real path reaches. |
 | Reject a finding with "unlikely" | Name the reason: no caller, guarded at line X, or input never reaches it. |
